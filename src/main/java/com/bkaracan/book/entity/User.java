@@ -59,11 +59,6 @@ public class User implements UserDetails, Principal {
     private LocalDateTime lastModifiedDate;
 
     @Override
-    public String getName() {
-        return email;
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles
                 .stream()
@@ -103,5 +98,10 @@ public class User implements UserDetails, Principal {
 
     private String fullName() {
         return firstName + " " + lastName;
+    }
+
+    @Override
+    public String getName() {
+        return email;
     }
 }

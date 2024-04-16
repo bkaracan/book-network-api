@@ -3,14 +3,17 @@ package com.bkaracan.book.service;
 import com.bkaracan.book.authentication.RegistrationRequest;
 import com.bkaracan.book.entity.Token;
 import com.bkaracan.book.entity.User;
+import com.bkaracan.book.enumaration.EmailTemplateEnum;
 import com.bkaracan.book.repository.RoleRepository;
 import com.bkaracan.book.repository.TokenRepository;
 import com.bkaracan.book.repository.UserRepository;
+import jakarta.mail.MessagingException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +25,12 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final EmailService emailService;
 
-    public void register(RegistrationRequest request) {
+    @Value("${application.mailing.frontend.activation-url}")
+    private String activationUrl;
+
+    public void register(RegistrationRequest request) throws MessagingException {
         var userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new IllegalStateException("Role USER was not initialized!"));
         var user = User.builder()
@@ -39,9 +46,16 @@ public class AuthenticationService {
         sendValidationEmail(user);
     }
 
-    private void sendValidationEmail(User user) {
+    private void sendValidationEmail(User user) throws MessagingException {
         var newToken = generateAndSaveActivationToken(user);
-        // send email
+        emailService.sendEmail(
+                user.getEmail(),
+                user.fullName(),
+                EmailTemplateEnum.ACTIVATE_ACCOUNT,
+                activationUrl,
+                newToken,
+                "Account Activation"
+        );
     }
 
     private String generateAndSaveActivationToken(User user) {

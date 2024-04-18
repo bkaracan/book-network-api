@@ -10,7 +10,6 @@ import com.bkaracan.book.repository.RoleRepository;
 import com.bkaracan.book.repository.TokenRepository;
 import com.bkaracan.book.repository.UserRepository;
 import jakarta.mail.MessagingException;
-import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashMap;

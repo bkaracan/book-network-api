@@ -2,6 +2,7 @@ package com.bkaracan.book.controller;
 
 import com.bkaracan.book.dto.request.BookRequest;
 import com.bkaracan.book.dto.response.BookResponse;
+import com.bkaracan.book.dto.response.common.PageResponse;
 import com.bkaracan.book.service.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,5 +30,14 @@ public class BookController {
     public ResponseEntity<BookResponse> findBookById(@PathVariable("book-id") Long bookId) {
 
         return ResponseEntity.ok(bookservice.findById(bookId));
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponse<BookResponse>> findAllBooks(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+            Authentication connectedUser)
+    {
+        return ResponseEntity.ok(bookservice.findAllBooks(page, size, connectedUser));
     }
 }

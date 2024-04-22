@@ -1,14 +1,15 @@
 package com.bkaracan.book.entity;
 
 import com.bkaracan.book.entity.common.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.bkaracan.book.history.BookTransactionHistory;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @Entity
 @Table(name = "book")
@@ -36,5 +37,15 @@ public class Book extends BaseEntity {
 
     @Column(name = "is_shareable")
     private boolean isShareable;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @OneToMany(mappedBy = "book")
+    private List<Feedback> feedbacks;
+
+    @OneToMany(mappedBy = "book")
+    private List<BookTransactionHistory> histories;
 
 }

@@ -1,4 +1,4 @@
-package com.bkaracan.book.dto;
+package com.bkaracan.book.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

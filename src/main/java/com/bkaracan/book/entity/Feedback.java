@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "feedback")
 @Getter
@@ -18,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class Feedback extends BaseEntity {
+public class Feedback extends BaseEntity implements Serializable {
 
     private Double note;
 

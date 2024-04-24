@@ -31,7 +31,8 @@ public class Token {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    private String token;
+    @Column(name = "token_value")
+    private String tokenValue;
 
     private LocalDateTime createdAt;
 

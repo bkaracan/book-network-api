@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @SuperBuilder
@@ -20,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Entity
 @Table(name = "book_transact_history")
-public class BookTransactionHistory extends BaseEntity {
+public class BookTransactionHistory extends BaseEntity implements Serializable {
 
     private boolean isReturned;
 

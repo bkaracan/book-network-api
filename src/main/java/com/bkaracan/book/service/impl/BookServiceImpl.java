@@ -8,6 +8,7 @@ import com.bkaracan.book.entity.User;
 import com.bkaracan.book.mapper.BookMapper;
 import com.bkaracan.book.repository.BookRepository;
 import com.bkaracan.book.service.BookService;
+import com.bkaracan.book.spec.BookSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,25 @@ public class BookServiceImpl implements BookService {
         User user = ((User) connectedUser.getPrincipal());
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<Book> books = bookRepository.findAllDisplayableBooks(pageable, user.getId());
+        List<BookResponse> bookResponse = books.stream()
+                .map(bookMapper::convertToDto)
+                .toList();
+        return new PageResponse<>(
+                bookResponse,
+                books.getNumber(),
+                books.getSize(),
+                books.getTotalElements(),
+                books.getTotalPages(),
+                books.isFirst(),
+                books.isLast()
+        );
+    }
+
+    @Override
+    public PageResponse<BookResponse> findAllBooksByOwner(int page, int size, Authentication connectedUser) {
+        User user = ((User) connectedUser.getPrincipal());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Page<Book> books = bookRepository.findAll(BookSpecification.withOwnerId(user.getId()), pageable);
         List<BookResponse> bookResponse = books.stream()
                 .map(bookMapper::convertToDto)
                 .toList();

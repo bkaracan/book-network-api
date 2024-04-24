@@ -20,7 +20,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<?> register(
+    public ResponseEntity<Void> register(
             @RequestBody @Valid RegistrationRequest request
     ) throws MessagingException {
         authenticationService.register(request);
@@ -35,9 +35,10 @@ public class AuthenticationController {
     }
 
     @GetMapping("/activate-account")
-    public void confirm(
+    public ResponseEntity<Void> confirm(
             @RequestParam String token
     ) throws MessagingException {
         authenticationService.activateAccount(token);
+        return ResponseEntity.ok().build();
     }
 }

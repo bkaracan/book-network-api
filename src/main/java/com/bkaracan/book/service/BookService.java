@@ -12,4 +12,6 @@ public interface BookService {
     BookResponse findById(Long bookId);
 
     PageResponse<BookResponse> findAllBooks(int page, int size, Authentication connectedUser);
+
+    PageResponse<BookResponse> findAllBooksByOwner(int page, int size, Authentication connectedUser);
 }

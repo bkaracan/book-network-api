@@ -80,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void activateAccount(String token) throws MessagingException {
-        Token savedToken = tokenRepository.findByToken(token)
+        Token savedToken = tokenRepository.findByTokenValue(token)
                 .orElseThrow(() -> new InvalidTokenException("Invalid token!"));
         if(LocalDateTime.now().isAfter(savedToken.getExpiredAt())) {
             sendValidationEmail(savedToken.getUser());
@@ -109,7 +109,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String generateAndSaveActivationToken(User user) {
         String generatedToken = generateActivationCode();
         var token = Token.builder()
-                .token(generatedToken)
+                .tokenValue(generatedToken)
                 .createdAt(LocalDateTime.now())
                 .expiredAt(LocalDateTime.now().plusMinutes(15))
                 .user(user)

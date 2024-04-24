@@ -6,6 +6,8 @@ import com.bkaracan.book.authentication.RegistrationRequest;
 import com.bkaracan.book.entity.Token;
 import com.bkaracan.book.entity.User;
 import com.bkaracan.book.enumaration.EmailTemplateEnum;
+import com.bkaracan.book.exception.InvalidTokenException;
+import com.bkaracan.book.exception.TokenExpiredException;
 import com.bkaracan.book.repository.RoleRepository;
 import com.bkaracan.book.repository.TokenRepository;
 import com.bkaracan.book.repository.UserRepository;
@@ -79,10 +81,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void activateAccount(String token) throws MessagingException {
         Token savedToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid token!"));
+                .orElseThrow(() -> new InvalidTokenException("Invalid token!"));
         if(LocalDateTime.now().isAfter(savedToken.getExpiredAt())) {
             sendValidationEmail(savedToken.getUser());
-            throw new RuntimeException("Activation token has expired. A new token has been sent to the same email address.");
+            throw new TokenExpiredException("Activation token has expired. A new token has been sent to the same email address.");
         }
         var user = userRepository.findById(savedToken.getUser().getId())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));

@@ -7,6 +7,7 @@ import com.bkaracan.book.dto.response.common.PageResponse;
 import com.bkaracan.book.entity.Book;
 import com.bkaracan.book.entity.User;
 import com.bkaracan.book.entity.BookTransactionHistory;
+import com.bkaracan.book.exception.OperationNotPermittedException;
 import com.bkaracan.book.mapper.BookMapper;
 import com.bkaracan.book.repository.BookRepository;
 import com.bkaracan.book.repository.BookTransactionHistoryRepository;
@@ -23,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @__(@Autowired))
@@ -122,5 +124,18 @@ public class BookServiceImpl implements BookService {
                 allBorrowedBooks.isFirst(),
                 allBorrowedBooks.isLast()
         );
+    }
+
+    @Override
+    public Long updateShareableStatus(Long bookId, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException(("The book is not found with the ID : " + bookId)));
+        User user = ((User) connectedUser.getPrincipal());
+        if(!Objects.equals(book.getOwner().getBooks(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot update books shareable status");
+        }
+        book.setShareable(!book.isShareable());
+        bookRepository.save(book);
+        return bookId;
     }
 }

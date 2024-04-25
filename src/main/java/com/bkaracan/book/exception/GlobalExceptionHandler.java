@@ -126,4 +126,16 @@ public class GlobalExceptionHandler {
                                 .build()
                 );
     }
+
+    @ExceptionHandler(OperationNotPermittedException.class)
+    public ResponseEntity<ExceptionResponse> operationNotPermittedException(OperationNotPermittedException exp) {
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR)
+                .body(
+                        ExceptionResponse.builder()
+                                .businessErrorDescription("NOT_PERMITTED")
+                                .error(exp.getMessage())
+                                .build()
+                );
+    }
 }

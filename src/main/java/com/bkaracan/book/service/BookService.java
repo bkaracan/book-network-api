@@ -2,6 +2,7 @@ package com.bkaracan.book.service;
 
 import com.bkaracan.book.dto.request.BookRequest;
 import com.bkaracan.book.dto.response.BookResponse;
+import com.bkaracan.book.dto.response.BorrowedBookResponse;
 import com.bkaracan.book.dto.response.common.PageResponse;
 import org.springframework.security.core.Authentication;
 
@@ -14,4 +15,6 @@ public interface BookService {
     PageResponse<BookResponse> findAllBooks(int page, int size, Authentication connectedUser);
 
     PageResponse<BookResponse> findAllBooksByOwner(int page, int size, Authentication connectedUser);
+
+    PageResponse<BorrowedBookResponse> findAllBorrowedBooks(int page, int size, Authentication connectedUser);
 }

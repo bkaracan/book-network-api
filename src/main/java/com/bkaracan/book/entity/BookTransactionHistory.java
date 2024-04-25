@@ -1,7 +1,5 @@
-package com.bkaracan.book.history;
+package com.bkaracan.book.entity;
 
-import com.bkaracan.book.entity.Book;
-import com.bkaracan.book.entity.User;
 import com.bkaracan.book.entity.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;

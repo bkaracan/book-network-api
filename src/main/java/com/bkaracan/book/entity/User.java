@@ -1,6 +1,5 @@
 package com.bkaracan.book.entity;
 
-import com.bkaracan.book.history.BookTransactionHistory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -79,8 +78,9 @@ public class User implements UserDetails, Principal {
 
     @Override
     public String getUsername() {
-        return email;
+        return "email";
     }
+
 
     @Override
     public boolean isAccountNonExpired() {

@@ -1,7 +1,6 @@
 package com.bkaracan.book.entity;
 
 import com.bkaracan.book.entity.common.BaseEntity;
-import com.bkaracan.book.history.BookTransactionHistory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -151,4 +151,28 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(book);
         return bookId;
     }
+
+    @Override
+    public Long borrowBook(Long bookId, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException(("The book is not found with the ID :")));
+        if(book.isArchived() || !book.isShareable()) {
+            throw new OperationNotPermittedException("The requested book cannot be borrowed since it's archived or not shareable!");
+        }
+        User user = ((User) connectedUser.getPrincipal());
+        if(Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot borrow your own book!");
+        }
+        final boolean isAlreadyBorrowed = bookTransactionHistoryRepository.isAlreadyBorrowedByUser(bookId, user.getId());
+        if(isAlreadyBorrowed) {
+            throw new OperationNotPermittedException("The requested book is already borrowed!");
+        }
+        BookTransactionHistory bookTransactionHistory = BookTransactionHistory.builder()
+                .user(user)
+                .book(book)
+                .isReturned(false)
+                .isReturnApproved(false)
+                .build();
+        return bookTransactionHistoryRepository.save(bookTransactionHistory).getId();
+    }
 }

@@ -23,4 +23,6 @@ public interface BookService {
     Long updateShareableStatus(Long bookId, Authentication connectedUser);
 
     Long updateArchivedStatus(Long bookId, Authentication connectedUser);
+
+    Long borrowBook(Long bookId, Authentication connectedUser);
 }

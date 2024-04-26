@@ -72,5 +72,11 @@ public class BookController {
         return ResponseEntity.ok(bookservice.updateShareableStatus(bookId, connectedUser));
     }
 
+    @PutMapping("/archived/{book-id}")
+    public ResponseEntity<Long> updateArchivedStatus(
+            @PathVariable("book-id") Long bookId, Authentication connectedUser) {
+        return ResponseEntity.ok(bookservice.updateArchivedStatus(bookId, connectedUser));
+    }
+
 
 }

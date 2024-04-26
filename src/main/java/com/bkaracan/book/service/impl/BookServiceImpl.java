@@ -138,4 +138,17 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(book);
         return bookId;
     }
+
+    @Override
+    public Long updateArchivedStatus(Long bookId, Authentication connectedUser) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("The book is not found with the ID : " + bookId));
+        User user = ((User) connectedUser.getPrincipal());
+        if(!Objects.equals(book.getOwner().getBooks(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot update book archived status");
+        }
+        book.setArchived(!book.isArchived());
+        bookRepository.save(book);
+        return bookId;
+    }
 }

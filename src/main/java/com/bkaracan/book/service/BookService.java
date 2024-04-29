@@ -25,4 +25,6 @@ public interface BookService {
     Long updateArchivedStatus(Long bookId, Authentication connectedUser);
 
     Long borrowBook(Long bookId, Authentication connectedUser);
+
+    Long returnBorrowedBook(Long bookId, Authentication connectedUser);
 }

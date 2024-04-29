@@ -12,6 +12,7 @@ import com.bkaracan.book.mapper.BookMapper;
 import com.bkaracan.book.repository.BookRepository;
 import com.bkaracan.book.repository.BookTransactionHistoryRepository;
 import com.bkaracan.book.service.BookService;
+import com.bkaracan.book.service.FileStorageService;
 import com.bkaracan.book.spec.BookSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +35,7 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final BookRepository bookRepository;
     private final BookTransactionHistoryRepository bookTransactionHistoryRepository;
+    private final FileStorageService fileStorageService;
 
     @Override
     public Long save(BookRequest bookRequest, Authentication connectedUser) {
@@ -210,5 +213,15 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new OperationNotPermittedException("The book is not returned yet. You cannot approve its return!"));
         bookTransactionHistory.setReturnApproved(true);
         return bookTransactionHistoryRepository.save(bookTransactionHistory).getId();
+    }
+
+    @Override
+    public void uploadBookCoverPicture(MultipartFile file, Authentication connectedUser, Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException(("The book is not found with the ID :")));
+        User user = ((User) connectedUser.getPrincipal());
+        var bookCover = fileStorageService.saveFile(file, user.getId());
+        book.setBookCover(bookCover);
+        bookRepository.save(book);
     }
 }

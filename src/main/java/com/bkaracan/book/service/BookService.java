@@ -5,6 +5,7 @@ import com.bkaracan.book.dto.response.BookResponse;
 import com.bkaracan.book.dto.response.BorrowedBookResponse;
 import com.bkaracan.book.dto.response.common.PageResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface BookService {
 
@@ -29,4 +30,6 @@ public interface BookService {
     Long returnBorrowedBook(Long bookId, Authentication connectedUser);
 
     Long approveReturnedBook(Long bookId, Authentication connectedUser);
+
+    void uploadBookCoverPicture(MultipartFile file, Authentication connectedUser, Long bookId);
 }

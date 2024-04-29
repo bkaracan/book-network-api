@@ -27,4 +27,6 @@ public interface BookService {
     Long borrowBook(Long bookId, Authentication connectedUser);
 
     Long returnBorrowedBook(Long bookId, Authentication connectedUser);
+
+    Long approveReturnedBook(Long bookId, Authentication connectedUser);
 }

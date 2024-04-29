@@ -5,6 +5,7 @@ import com.bkaracan.book.dto.response.BookResponse;
 import com.bkaracan.book.dto.response.BorrowedBookResponse;
 import com.bkaracan.book.dto.response.common.PageResponse;
 import com.bkaracan.book.service.BookService;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("books")
@@ -37,8 +39,7 @@ public class BookController {
     public ResponseEntity<PageResponse<BookResponse>> findAllBooks(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
-            Authentication connectedUser)
-    {
+            Authentication connectedUser) {
         return ResponseEntity.ok(bookservice.findAllBooks(page, size, connectedUser));
     }
 
@@ -97,8 +98,15 @@ public class BookController {
         return ResponseEntity.ok(bookservice.approveReturnedBook(bookId, connectedUser));
     }
 
-
-
-
+    @PostMapping(value = "/cover/{book-id}", consumes = "multipart/form-data")
+    public ResponseEntity<?> uploadBookCoverPicture(
+            @PathVariable("book-id") Long bookId,
+            @Parameter()
+            @RequestPart("file") MultipartFile file,
+            Authentication connectedUser
+    ) {
+        bookservice.uploadBookCoverPicture(file, connectedUser, bookId);
+        return ResponseEntity.accepted().build();
+    }
 
 }

@@ -5,6 +5,7 @@ import com.bkaracan.book.dto.response.BookResponse;
 import com.bkaracan.book.dto.response.BorrowedBookResponse;
 import com.bkaracan.book.entity.Book;
 import com.bkaracan.book.entity.BookTransactionHistory;
+import com.bkaracan.book.utils.FileUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,6 +33,7 @@ public class BookMapper {
                 .isArchived(book.isArchived())
                 .isShareable(book.isShareable())
                 .owner(book.getOwner().fullName())
+                .cover(FileUtils.readFileFromLocation(book.getBookCover()))
                 .build();
     }
 

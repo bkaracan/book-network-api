@@ -1,6 +1,5 @@
 package com.bkaracan.book.service.impl;
 
-import com.bkaracan.book.entity.Book;
 import com.bkaracan.book.service.FileStorageService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -25,21 +24,27 @@ public class FileStorageServiceImpl implements FileStorageService {
     private String fileUploadPath;
 
     @Override
-    public String saveFile(
-            @NonNull MultipartFile sourceFile,
-            @NonNull Long userId) {
-        final String fileUploadSubPath = "users" + File.separator + userId;
+    public String saveFile(@NonNull MultipartFile sourceFile, @NonNull Long userId) {
+        if (userId < 0) {
+            log.error("Invalid user ID");
+            return null;
+        }
+
+        final String sanitizedUserId = sanitizeUserId(userId);
+        final String fileUploadSubPath = "users" + File.separator + sanitizedUserId;
         return uploadFile(sourceFile, fileUploadSubPath);
     }
 
-    private String uploadFile(
-            @NonNull MultipartFile sourceFile,
-            @NonNull String fileUploadSubPath) {
+    private String sanitizeUserId(Long userId) {
+        return userId.toString();
+    }
+
+    private String uploadFile(@NonNull MultipartFile sourceFile, @NonNull String fileUploadSubPath) {
         final String finalUploadPath = fileUploadPath + File.separator + fileUploadSubPath;
         File targetFolder = new File(finalUploadPath);
-        if(!targetFolder.exists()) {
+        if (!targetFolder.exists()) {
             boolean folderCreated = targetFolder.mkdirs();
-            if(!folderCreated) {
+            if (!folderCreated) {
                 log.warn("Failed to create the target folder!");
                 return null;
             }

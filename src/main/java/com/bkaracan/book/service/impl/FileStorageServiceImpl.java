@@ -25,9 +25,11 @@ public class FileStorageServiceImpl implements FileStorageService {
     private String fileUploadPath;
 
     @Override
-    public String saveFile(
-            @NonNull MultipartFile sourceFile,
-            @NonNull Long userId) {
+    public String saveFile(@NonNull MultipartFile sourceFile, @NonNull Long userId) {
+        if (userId == null || userId < 1) {
+            log.error("Invalid or null userId provided: " + userId);
+            return null;
+        }
         final String fileUploadSubPath = "users" + File.separator + userId;
         return uploadFile(sourceFile, fileUploadSubPath);
     }
@@ -42,7 +44,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         final String finalUploadPath = fileUploadPath + File.separator + sanitizePath(fileUploadSubPath);
         File targetFolder = new File(finalUploadPath);
         if (!targetFolder.exists() && !targetFolder.mkdirs()) {
-            log.warn("Failed to create the target folder!");
+            log.warn("Failed to create the target folder at " + finalUploadPath);
             return null;
         }
 
@@ -51,11 +53,11 @@ public class FileStorageServiceImpl implements FileStorageService {
         try {
             Files.write(targetPath, sourceFile.getBytes());
             log.info("File saved to " + targetFilePath);
+            return targetFilePath;
         } catch (IOException e) {
-            log.error("File was not saved!", e);
+            log.error("Attempt to save file failed due to an IOException", e);
             return null;
         }
-        return null;
     }
 
     private String sanitizeFilename(String filename) {
@@ -63,7 +65,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     private String sanitizePath(String path) {
-        return path.replaceAll("[^a-zA-Z0-9/]", "");
+        return path.replaceAll("[^a-zA-Z0-9/]", "").substring(0, Math.min(path.length(), 255));
     }
 
     private String getFileExtension(String filename) {
